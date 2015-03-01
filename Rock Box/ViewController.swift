@@ -11,8 +11,8 @@ import CoreMotion
 
 class ViewController: UIViewController {
     // Most conservative guess. We'll set them later.
-    var maxX : CGFloat = 320;
-    var maxY : CGFloat = 320;
+    var maxX : CGFloat = 320
+    var maxY : CGFloat = 320
     let boxSize : CGFloat = 30.0
     var boxes : Array<UIView> = []
 
@@ -22,8 +22,8 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        maxX = super.view.bounds.size.width - boxSize;
-        maxY = super.view.bounds.size.height - boxSize;
+        maxX = super.view.bounds.size.width - boxSize
+        maxY = super.view.bounds.size.height - boxSize
         // Do any additional setup after loading the view, typically from a nib.
         createAnimatorStuff()
         generateBoxes()
@@ -47,16 +47,16 @@ class ViewController: UIViewController {
     }
 
     func randomColor() -> UIColor {
-        let red = CGFloat(CGFloat(arc4random()%100000)/100000);
-        let green = CGFloat(CGFloat(arc4random()%100000)/100000);
-        let blue = CGFloat(CGFloat(arc4random()%100000)/100000);
+        let red = CGFloat(CGFloat(arc4random()%100000)/100000)
+        let green = CGFloat(CGFloat(arc4random()%100000)/100000)
+        let blue = CGFloat(CGFloat(arc4random()%100000)/100000)
 
-        return UIColor(red: red, green: green, blue: blue, alpha: 0.85);
+        return UIColor(red: red, green: green, blue: blue, alpha: 0.85)
     }
 
     func doesNotCollide(testRect: CGRect) -> Bool {
         for box : UIView in boxes {
-            var viewRect = box.frame;
+            var viewRect = box.frame
             if(CGRectIntersectsRect(testRect, viewRect)) {
                 return false
             }
@@ -69,8 +69,8 @@ class ViewController: UIViewController {
 
         do {
             let guessX = CGFloat(arc4random()) % maxX
-            let guessY = CGFloat(arc4random()) % maxY;
-            guess = CGRectMake(guessX, guessY, boxSize, boxSize);
+            let guessY = CGFloat(arc4random()) % maxY
+            guess = CGRectMake(guessX, guessY, boxSize, boxSize)
         } while(!doesNotCollide(guess))
 
         return guess
@@ -82,15 +82,15 @@ class ViewController: UIViewController {
 
         view.addSubview(newBox)
         addBoxToBehaviors(newBox)
-        boxes += newBox;
+        boxes.append(newBox)
         return newBox
     }
 
     func generateBoxes() {
-        for i in 0..10 {
+        for i in 0..<10 {
             var frame = randomFrame()
             var color = randomColor()
-            var newBox = addBox(frame, color: color);
+            var newBox = addBox(frame, color: color)
             chainBoxes(newBox)
         }
     }
@@ -116,22 +116,22 @@ class ViewController: UIViewController {
 
     //----------------- UIDynamicAllocator
 
-    var animator:UIDynamicAnimator? = nil;
+    var animator:UIDynamicAnimator? = nil
     let gravity = UIGravityBehavior()
     let collider = UICollisionBehavior()
     let itemBehavior = UIDynamicItemBehavior()
 
     func createAnimatorStuff() {
-        animator = UIDynamicAnimator(referenceView:self.view);
+        animator = UIDynamicAnimator(referenceView:self.view)
 
         gravity.gravityDirection = CGVectorMake(0, 0.8)
-        animator?.addBehavior(gravity);
+        animator?.addBehavior(gravity)
 
         // We're bouncin' off the walls
         collider.translatesReferenceBoundsIntoBoundary = true
         animator?.addBehavior(collider)
 
-        itemBehavior.friction = 0.1;
+        itemBehavior.friction = 0.1
         itemBehavior.elasticity = 0.9
         animator?.addBehavior(itemBehavior)
     }
@@ -144,18 +144,18 @@ class ViewController: UIViewController {
 
     //----------------- Core Motion
     func gravityUpdated(motion: CMDeviceMotion!, error: NSError!) {
-        let grav : CMAcceleration = motion.gravity;
+        let grav : CMAcceleration = motion.gravity
 
-        let x = CGFloat(grav.x);
-        let y = CGFloat(grav.y);
+        let x = CGFloat(grav.x)
+        let y = CGFloat(grav.y)
         var p = CGPointMake(x,y)
 
-        if error {
+        if (error != nil) {
             NSLog("\(error)")
         }
 
         // Have to correct for orientation.
-        var orientation = UIApplication.sharedApplication().statusBarOrientation;
+        var orientation = UIApplication.sharedApplication().statusBarOrientation
 
         if(orientation == UIInterfaceOrientation.LandscapeLeft) {
             var t = p.x
@@ -170,8 +170,8 @@ class ViewController: UIViewController {
             p.y *= -1
         }
         
-        var v = CGVectorMake(p.x, 0 - p.y);
-        gravity.gravityDirection = v;
+        var v = CGVectorMake(p.x, 0 - p.y)
+        gravity.gravityDirection = v
     }
 }
 
